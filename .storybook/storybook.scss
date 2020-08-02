@@ -1,0 +1,78 @@
+$font-path: '../themes/app/src/fonts';
+$icon-path: '../themes/app/src/icons';
+
+@import '../themes/app/src/scss/app';
+@import 'icons';
+
+.sb {
+  &__icon-holder {
+    width: 180px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto;
+    align-items: center;
+    border: 1px solid #DEDEDE;
+    margin-bottom: 30px;
+    background-image: linear-gradient(0deg, transparent 50%, rgb(238, 238, 238) 50%), linear-gradient(90deg, #ddd 50%, #FFF 50%);
+    background-size: 5px 5px, 5px 5px;
+    background-position: 0 0, 0 5px;
+  }
+
+  &__icon-label {
+    display: block;
+    line-height: 2;
+    font-weight: $font-weight-bold;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  @each $icon in $icons {
+    &__icon.sb__icon--#{$icon} {
+      @include icon(#{$icon});
+    }
+  }
+
+  &__story-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  &__group {
+    margin-top: 40px;
+
+    &:first-child {
+      margin-top: 20px;
+    }
+  }
+
+  &__header {
+    border-bottom: 1px solid #DEDEDE;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+  }
+
+  &__subheader {
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+
+  &__color-palette-wrapper {
+    display: grid;
+    grid-template-columns: repeat(5, 16rem);
+    grid-gap: 4rem;
+
+    .box {
+      display: grid;
+      height: 8rem;
+      padding: 2rem;
+      grid-template-rows: repeat(2, 1fr);
+
+      :last-child {
+        align-self: end;
+      }
+    }
+  }
+}

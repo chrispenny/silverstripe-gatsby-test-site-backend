@@ -1,0 +1,85 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: silverstripe/bespoke-ci-base:1.0.0
+        environment:
+          - DISPLAY=:99
+          - CHROME_BIN=/usr/bin/google-chrome-stable
+          - BASH_ENV=/root/.bashrc
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_USER=root
+          - MYSQL_ROOT_PASSWORD=ubuntu
+          - MYSQL_DATABASE=circle_test
+          - MYSQL_HOST=127.0.0.1
+
+    working_directory: /var/www/mysite/www
+
+    steps:
+      # Use correct php/node versions
+      - run: php-switch 7.3
+
+      # Start Apache, Nginx and Xvfb
+      - run: sudo service apache2 start
+      - run: sudo service nginx start
+      - run:
+          command: Xvfb :99 -screen 0 1280x1024x24
+          background: true
+
+      - checkout
+
+      # Composer Cache + Installation
+      - restore_cache:
+          keys:
+            - v1-composer-{{ checksum "composer.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-composer-
+      - run: composer install -n --prefer-dist
+      # Save all dependancies to cache
+      - save_cache:
+          key: v1-composer-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+            - resources
+
+      # NPM Cache + Installation
+      - restore_cache:
+          keys:
+            - v1-npm-deps-{{ checksum "package.json" }}
+            - v1-npm-deps-
+      - run: yarn install
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: v1-npm-deps-{{ checksum "package.json" }}
+
+      - run: mv .circleci/.env.circleci .env
+      - run: chown -R vagrant:vagrant /var/www/mysite/www
+      - run: chmod g+s /var/www/mysite/www/public
+
+      # JS and SCSS Linting
+      - run: yarn dev
+      - run: yarn production
+
+      - run: composer silverstripe-standards
+
+      # dev/build
+      - run: sudo -u vagrant vendor/bin/sake dev/build flush=1
+
+      # PHP Tests
+      - run: vendor/bin/phpunit --verbose
+
+      # Vue Tests
+      - run: yarn test
+
+      # JS E2E tests
+      - run: yarn nightwatch --url http://localhost/
+
+      - store_artifacts:
+          path: app/tests/nightwatch_screenshots
+          destination: nightwatch_screenshots

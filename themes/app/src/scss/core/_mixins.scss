@@ -1,0 +1,30 @@
+/**
+ * Mixin to allow easy use of icons.
+ *
+ * @example
+ * .btn {
+ *   &::after {
+ *     @include icon(my-icon, 16px, 16px)
+ *   }
+ * }
+ */
+@mixin icon($icon, $width: 24px, $height: 24px) {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: inline-block;
+  vertical-align: middle;
+  height: $height;
+  width: $width;
+  background-image: url('#{$icon-path}/#{$icon}.svg');
+  content: '';
+}
+
+@mixin heading-link() {
+  color: $heading-link-color;
+
+  &:hover {
+    color: $heading-link-hover-color;
+    text-decoration: none;
+  }
+}

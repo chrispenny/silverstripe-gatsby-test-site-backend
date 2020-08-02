@@ -1,0 +1,53 @@
+{
+    "name": "silverstripe/platform-project",
+    "description": "The SilverStripe Platform base project / installer.",
+    "require": {
+        "php": ">=7.1",
+        "silverstripe/recipe-cms": "^4",
+        "silverstripe/dynamodb": "^4",
+        "silverstripe/crontask": "^2",
+        "silverstripe/silverstripe-gatsby": "dev-master",
+        "dnadesign/silverstripe-elemental": "^4.3",
+        "sheadawson/silverstripe-linkable": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7",
+        "jdolba/silverstripe-coding-standards": "^0.1"
+    },
+    "config": {
+        "process-timeout": 600
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "silverstripe-standards": [
+            "@php-lint",
+            "@phpcs",
+            "yarn lint"
+        ],
+        "php-lint": "parallel-lint app/src app/tests",
+        "phpcs": "phpcs app/src app/tests --standard=vendor/jdolba/silverstripe-coding-standards/definitions/php/phpcs-ss4.xml --extensions=php --encoding=utf-8",
+        "phpcbf": "phpcbf app/src app/tests --standard=vendor/jdolba/silverstripe-coding-standards/definitions/php/phpcs-ss4.xml --extensions=php --encoding=utf-8",
+        "phpcs-fix": "@phpcbf"
+    },
+    "extra": {
+        "project-files-installed": [
+            "app/.htaccess",
+            "app/_config.php",
+            "app/_config/mysite.yml",
+            "app/src/Page.php",
+            "app/src/PageController.php"
+        ],
+        "public-files-installed": [
+            ".htaccess",
+            "index.php",
+            "install-frameworkmissing.html",
+            "install.php",
+            "web.config"
+        ],
+        "expose": [
+            "themes/app/dist"
+        ],
+        "resources-dir": "_resources"
+    }
+}
